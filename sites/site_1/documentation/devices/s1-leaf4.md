@@ -180,7 +180,7 @@ daemon TerminAttr
 
 | Domain-id | Local-interface | Peer-address | Peer-link |
 | --------- | --------------- | ------------ | --------- |
-| RACK2 | Vlan4094 | 10.1.253.8 | Port-Channel1 |
+| RACK2 | Vlan4094 | 10.1.253.0 | Port-Channel1 |
 
 Dual primary detection is disabled.
 
@@ -191,7 +191,7 @@ Dual primary detection is disabled.
 mlag configuration
    domain-id RACK2
    local-interface Vlan4094
-   peer-address 10.1.253.8
+   peer-address 10.1.253.0
    peer-link Port-Channel1
    reload-delay mlag 300
    reload-delay non-mlag 330
@@ -244,6 +244,7 @@ vlan internal order ascending range 1006 1199
 | VLAN ID | Name | Trunk Groups |
 | ------- | ---- | ------------ |
 | 20 | Twenty | - |
+| 25 | Twenty-five | - |
 | 4094 | MLAG_PEER | MLAG |
 
 ### VLANs Device Configuration
@@ -252,6 +253,9 @@ vlan internal order ascending range 1006 1199
 !
 vlan 20
    name Twenty
+!
+vlan 25
+   name Twenty-five
 !
 vlan 4094
    name MLAG_PEER
@@ -269,8 +273,8 @@ vlan 4094
 | Interface | Description | Mode | VLANs | Native VLAN | Trunk Group | Channel-Group |
 | --------- | ----------- | ---- | ----- | ----------- | ----------- | ------------- |
 | Ethernet1 | MLAG_PEER_s1-leaf3_Ethernet1 | *trunk | *- | *- | *['MLAG'] | 1 |
-| Ethernet2 | S1-SPINE1_Ethernet5 | *trunk | *20 | *- | *- | 2 |
-| Ethernet3 | S1-SPINE2_Ethernet5 | *trunk | *20 | *- | *- | 2 |
+| Ethernet2 | S1-SPINE1_Ethernet5 | *trunk | *20,25 | *- | *- | 2 |
+| Ethernet3 | S1-SPINE2_Ethernet5 | *trunk | *20,25 | *- | *- | 2 |
 | Ethernet4 | s1-host2_eth2 | *access | *20 | *- | *- | 4 |
 | Ethernet6 | MLAG_PEER_s1-leaf3_Ethernet6 | *trunk | *- | *- | *['MLAG'] | 1 |
 
@@ -315,7 +319,7 @@ interface Ethernet6
 | Interface | Description | Type | Mode | VLANs | Native VLAN | Trunk Group | LACP Fallback Timeout | LACP Fallback Mode | MLAG ID | EVPN ESI |
 | --------- | ----------- | ---- | ---- | ----- | ----------- | ------------| --------------------- | ------------------ | ------- | -------- |
 | Port-Channel1 | MLAG_PEER_s1-leaf3_Po1 | switched | trunk | - | - | ['MLAG'] | - | - | - | - |
-| Port-Channel2 | SPINES_Po4 | switched | trunk | 20 | - | - | - | - | 2 | - |
+| Port-Channel2 | SPINES_Po4 | switched | trunk | 20,25 | - | - | - | - | 2 | - |
 | Port-Channel4 | s1-host2 | switched | access | 20 | - | - | - | - | 4 | - |
 
 #### Port-Channel Interfaces Device Configuration
@@ -333,7 +337,7 @@ interface Port-Channel2
    description SPINES_Po4
    no shutdown
    switchport
-   switchport trunk allowed vlan 20
+   switchport trunk allowed vlan 20,25
    switchport mode trunk
    mlag 2
 !
@@ -358,7 +362,7 @@ interface Port-Channel4
 
 | Interface | VRF | IP Address | IP Address Virtual | IP Router Virtual Address | VRRP | ACL In | ACL Out |
 | --------- | --- | ---------- | ------------------ | ------------------------- | ---- | ------ | ------- |
-| Vlan4094 |  default  |  10.1.253.9/31  |  -  |  -  |  -  |  -  |  -  |
+| Vlan4094 |  default  |  10.1.253.1/31  |  -  |  -  |  -  |  -  |  -  |
 
 #### VLAN Interfaces Device Configuration
 
@@ -369,7 +373,7 @@ interface Vlan4094
    no shutdown
    mtu 1500
    no autostate
-   ip address 10.1.253.9/31
+   ip address 10.1.253.1/31
 ```
 
 ## Routing
